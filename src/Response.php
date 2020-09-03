@@ -38,4 +38,12 @@ class Response
     {
         return $this->data['result'] == 'Successful' && $this->data['responseCode'] == '000';
     }
+
+    /**
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        return $this->data[$name];
+    }
 }
