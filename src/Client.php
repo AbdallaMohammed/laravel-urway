@@ -115,7 +115,7 @@ class Client extends BaseService
                 $this->method,
                 $this->getEndPointPath(),
                 [
-                    'form_params' => $this->attributes,
+                    'json' => $this->attributes,
                     'headers' => [
                         'Accept' => 'application/json',
                     ],
