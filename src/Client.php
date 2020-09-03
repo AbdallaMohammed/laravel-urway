@@ -7,7 +7,7 @@ class Client extends BaseService
     /**
      * @var string
      */
-    protected $endpont = 'URWAYPGService/transaction/jsonProcess/JSONrequest';
+    protected $endpoint = 'URWAYPGService/transaction/jsonProcess/JSONrequest';
 
     /**
      * Request method.
@@ -21,9 +21,7 @@ class Client extends BaseService
      * 
      * @var array
      */
-    protected $attributes = [
-        'action' => '1', // According to the documentation the action must be 1
-    ];
+    protected $attributes = [];
 
     /**
      * @return $this
@@ -93,7 +91,7 @@ class Client extends BaseService
      */
     public function setAttributes(array $attributes)
     {
-        $this->attributes['udf2'] = $attributes;
+        $this->attributes = $attributes;
         return $this;
     }
 
@@ -104,8 +102,7 @@ class Client extends BaseService
     public function pay()
     {
         // According to documentation we have to send the `terminal_id`, and `password` now.
-        $this->attributes['terminalId'] = config('urway.auth.terminal_id');
-        $this->attributes['password'] = config('urway.auth.password');
+        $this->setAuthAttributes();
 
         // We have to generate request
         $this->generateRequestHash();
@@ -115,14 +112,41 @@ class Client extends BaseService
                 $this->method,
                 $this->getEndPointPath(),
                 [
-                    'form_params' => $this->attributes,
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
+                    'json' => $this->attributes,
                 ]
             );
 
-            return json_decode((string) $response->getBody());
+            return new Response((string) $response->getBody());
+        } catch (\Throwable $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+	/**
+     * @param string $transaction_id
+	 * @return mixed
+	 * @throws \GuzzleHttp\Exception\GuzzleException|\Exception
+	 */
+    public function find(string $transaction_id)
+    {
+        // According to documentation we have to send the `terminal_id`, and `password` now.
+        $this->setAuthAttributes();
+
+        // As requestHas for paying request is different from requestHash for find request.
+        $this->generateFindRequestHash();
+
+        $this->attributes['transid'] = $transaction_id;
+
+        try {
+            $response = $this->guzzleClient->request(
+                $this->method,
+                $this->getEndPointPath(),
+                [
+                    'json' => $this->attributes,
+                ]
+            );
+
+            return new Response((string) $response->getBody());
         } catch (\Throwable $e) {
             throw new \Exception($e->getMessage());
         }
@@ -133,7 +157,27 @@ class Client extends BaseService
      */
     protected function generateRequestHash()
     {
-        $this->attributes['requestHash'] = $this->attributes['trackid'] . '|' . config('urway.auth.terminal_id') . '|' . config('urway.auth.password') . '|' . config('urway.auth.merchant_key') . '|' . $this->attributes['amount'] . '|' . $this->attributes['currency'];
-        $this->attributes['requestHash'] = hash('sha256', $this->attributes['requestHash']);
+        $requestHash = $this->attributes['trackid'] . '|' . config('urway.auth.terminal_id') . '|' . config('urway.auth.password') . '|' . config('urway.auth.merchant_key') . '|' . $this->attributes['amount'] . '|' . $this->attributes['currency'];
+        $this->attributes['requestHash'] = hash('sha256', $requestHash);
+        $this->attributes['action'] = '1'; // I don't know why.
+    }
+
+    /**
+     * @return void
+     */
+    protected function generateFindRequestHash()
+    {
+        $requestHash = $this->attributes['trackid'] . '|' . config('urway.auth.terminal_id') . '|' . config('urway.auth.password') . '|' . config('urway.auth.merchant_key') . '|' . $this->attributes['amount']  . '|' . $this->attributes['currency'];
+        $this->attributes['requestHash'] = hash('sha256', $requestHash);
+        $this->attributes['action'] = '10'; // I don't know why.
+    }
+
+    /**
+     * @return void
+     */
+    protected function setAuthAttributes()
+    {
+        $this->attributes['terminalId'] = config('urway.auth.terminal_id');
+        $this->attributes['password'] = config('urway.auth.password');
     }
 }
