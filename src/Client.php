@@ -7,7 +7,7 @@ class Client extends BaseService
     /**
      * @var string
      */
-    protected $endpont = 'URWAYPGService/transaction/jsonProcess/JSONrequest';
+    protected $endpoint = 'URWAYPGService/transaction/jsonProcess/JSONrequest';
 
     /**
      * Request method.
@@ -93,7 +93,7 @@ class Client extends BaseService
      */
     public function setAttributes(array $attributes)
     {
-        $this->attributes['udf2'] = $attributes;
+        $this->attributes = $attributes;
         return $this;
     }
 
