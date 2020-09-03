@@ -18,7 +18,7 @@ abstract class BaseService
      * 
      * @var string
      */
-    protected $basePath = 'https://payments-dev.urway-tech.com/';
+    protected $basePath = 'https://payments-dev.urway-tech.com';
 
     /**
      * Store URWAY payment endpoint.
