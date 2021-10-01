@@ -40,6 +40,14 @@ class Response
     }
 
     /**
+     * @return bool
+     */
+    public function isFailure()
+    {
+        return ! $this->isSuccess();
+    }
+
+    /**
      * @return mixed
      */
     public function __get($name)
