@@ -60,10 +60,24 @@ $client->setTrackId('YOUR_TRAKING_ID')
         ->setAmount(5)
         ->setRedirectUrl('...');
         
-// Set custom attributes.
+// Replace presented attributes with the given array.
 $client->setAttributes([
     '...' => '...'
 ]);
+
+// Merge presented attributes the given array.
+$client->mergeAttributes([
+    '...' => '...'
+]);
+
+// Replace one of presented attributes with the new value.
+$client->setAttribute('...', '...');
+
+// Remove one of attributes.
+$client->removeAttribute('...');
+
+// Determine whether an attribute exists.
+$client->hasAttribute('...'); // returns boolean (true, or false)
 
 $redirect_url = $client->pay();
 

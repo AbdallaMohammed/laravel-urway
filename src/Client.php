@@ -91,7 +91,54 @@ class Client extends BaseService
      */
     public function setAttributes(array $attributes)
     {
+        $this->attributes = $attributes;
+        return $this;
+    }
+
+    /**
+     * @param array $attributes
+     * 
+     * @return $this
+     */
+    public function mergeAttributes(array $attributes)
+    {
         $this->attributes = array_merge($this->attributes, $attributes);
+        return $this;
+    }
+
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     * 
+     * @return $this
+     */
+    public function setAttribute($key, $value)
+    {
+        $this->attributes[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * @param mixed $key
+     * 
+     * @return boolean
+     */
+    public function hasAttribute($key)
+    {
+        return isset($this->attributes[$key]);
+    }
+
+    /**
+     * @param mixed $key
+     * 
+     * @return boolean
+     */
+    public function removeAttribute($key)
+    {
+        $this->attributes = array_filter($this->attributes, function ($name) use ($key) {
+            return $name !== $key;
+        }, ARRAY_FILTER_USE_KEY);
+
         return $this;
     }
 
