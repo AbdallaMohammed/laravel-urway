@@ -91,7 +91,7 @@ class Client extends BaseService
      */
     public function setAttributes(array $attributes)
     {
-        $this->attributes = $attributes;
+        $this->attributes = array_merge($this->attributes, $attributes);
         return $this;
     }
 
