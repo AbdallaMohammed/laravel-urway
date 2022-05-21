@@ -36,6 +36,7 @@ When published, the `config/urway.php` config file contains:
 <?php
 
 return [
+    'mode' => env('URWAY_MODE', 'test'),
     'auth' => [
         'terminal_id' => env('URWAY_TERMINAL_ID'),
         'password' => env('URWAY_PASSWORD'),
@@ -59,7 +60,7 @@ $client->setTrackId('YOUR_TRAKING_ID')
         ->setCountry('EG')
         ->setAmount(5)
         ->setRedirectUrl('...');
-        
+
 // Replace presented attributes with the given array.
 $client->setAttributes([
     '...' => '...'
@@ -105,3 +106,7 @@ if ($response->isFailure()) {
 // To dump all payment details.
 dd($response);
 ```
+
+#### Production
+
+To use this package in production mode, just update the `mode` value to `production` in the `config/urway.php` file.
